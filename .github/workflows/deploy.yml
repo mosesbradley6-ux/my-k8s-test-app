@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - run: |
+        aws ecr get-login-password --region eu-west-2 \
+        | docker login --username AWS --password-stdin \
+        <ACCOUNT_ID>.dkr.ecr.eu-west-2.amazonaws.com
+
+    - run: |
+        docker build -t task-tracker ./app
+        docker tag task-tracker:latest \
+        <ACCOUNT_ID>.dkr.ecr.eu-west-2.amazonaws.com/task-tracker:latest
+        docker push \
+        <ACCOUNT_ID>.dkr.ecr.eu-west-2.amazonaws.com/task-tracker:latest
+
+    - run: |
+        aws eks update-kubeconfig --region eu-west-2 --name task-tracker
+
+    - run: kubectl apply -f k8s/
