@@ -1,0 +1,25 @@
+task-tracker/
+├── app/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── k8s/
+│   ├── namespace.yaml
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── ingress.yaml
+│   └── hpa.yaml
+│
+├── terraform/
+│   ├── provider.tf
+│   ├── vpc.tf
+│   ├── eks.tf
+│   ├── rds.tf
+│   ├── variables.tf
+│   └── outputs.tf
+│
+├── .github/workflows/
+│   └── deploy.yml
+│
+└── README.md
